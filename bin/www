@@ -1,3 +1,5 @@
 #!/usr/bin/env node
 
-const server = require("../server.js");
+const SolotterServer = require("../server");
+
+new SolotterServer().run();
