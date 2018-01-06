@@ -21,7 +21,7 @@ insert_final_newline = true
 
 
 ; Web
-[*.{html,css,js,jsx,ts,tsx}]
+[*.{html,pug,css,js,jsx,ts,tsx}]
 indent_style = space
 indent_size = 2
 charset = utf-8
