@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  h1= title
+  form(
+    action="/tweet/create"
+    method="POST"
+    style="width: 600px;"
+  )
+    p #{twitterUser.displayName} #[em #{twitterUser.screenName}]
+    textarea(
+      name="tweet_content"
+      placeholder="What are you doing?"
+      style="width: 100%;"
+      rows=4
+      required
+      max-length=280
+    )
+    input(type="text" name="password" placeholder="password" required)
+    button(type="submit") Submit
+
+  p= status
+  p= errorMessage
