@@ -3,6 +3,7 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
+var cookieSession = require('cookie-session');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
@@ -22,6 +23,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Add cookie-based session management middleware.
+app.use(cookieSession({
+  name: 'session',
+  keys: [process.env.COOKIE_SESSION_SECRET],
+  // 90 days
+  maxAge: 90 * 24 * 60 * 60 * 1000,
+  expires: new Date(2100, 1, 1),
+  sameSite: true,
+}));
 
 app.use('/', index);
 app.use("/tweet", tweet);
