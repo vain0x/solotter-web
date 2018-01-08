@@ -3,11 +3,11 @@ extends layout
 block content
   h1= title
   form(
-    action="/tweet/create"
+    action="/tweet/post-tweet"
     method="POST"
     style="width: 600px;"
   )
-    p #{twitterUser.displayName} #[em #{twitterUser.screenName}]
+    p #{twitterUser.screenName}
     textarea(
       name="tweet_content"
       placeholder="What are you doing?"
@@ -16,7 +16,6 @@ block content
       required
       max-length=280
     )
-    input(type="text" name="password" placeholder="password" required)
     button(type="submit") Submit
 
   p= status

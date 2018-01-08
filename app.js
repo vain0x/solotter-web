@@ -7,8 +7,9 @@ var cookieSession = require('cookie-session');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var tweet = require("./routes/tweet");
 var users = require('./routes/users');
+const authRouter = require("./routes/auth");
+const tweetRouter = require("./routes/tweet");
 
 var app = express();
 
@@ -26,17 +27,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Add cookie-based session management middleware.
 app.use(cookieSession({
-  name: 'session',
   keys: [process.env.COOKIE_SESSION_SECRET],
   // 90 days
   maxAge: 90 * 24 * 60 * 60 * 1000,
   expires: new Date(2100, 1, 1),
-  sameSite: true,
 }));
 
 app.use('/', index);
-app.use("/tweet", tweet);
 app.use('/users', users);
+app.use("/auth", authRouter);
+app.use("/tweet", tweetRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
