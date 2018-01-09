@@ -19,3 +19,10 @@ block content
     button(type="submit") Submit
 
   p= status
+
+  h2 Logout
+  form(
+    action="/auth/logout"
+    method="POST"
+  )
+    button(type="submit") Logout

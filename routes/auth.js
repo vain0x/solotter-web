@@ -10,7 +10,7 @@ const isLoggedIn = req => {
   return t.accessToken !== undefined;
 };
 
-router.get("/logout", (req, res, _next) => {
+router.post("/logout", (req, res, _next) => {
   req.session.twitter = undefined;
   res.redirect("/");
 });
