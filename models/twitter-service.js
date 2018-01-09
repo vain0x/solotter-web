@@ -1,7 +1,5 @@
 const Twitter = require("twitter");
 const { OAuth } = require('oauth');
-const TwitterPin = require("twitter-pin");
-const opn = require("opn");
 
 class TwitterAppService {
   constructor() {
