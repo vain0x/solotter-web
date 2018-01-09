@@ -11,7 +11,6 @@ var index = require('./routes/index');
 const authRouter = require("./routes/auth");
 const tweetRouter = require("./routes/tweet");
 
-
 var app = express();
 
 // view engine setup
