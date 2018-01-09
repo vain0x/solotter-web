@@ -25,11 +25,6 @@ router.all("*", (req, res, next) => {
 });
 
 router.get("/login", async (req, res, _next) => {
-  const { redirectURI, oauthToken } = await twitterAppService.authenticate();
-  req.session.twitterOAuth = {
-    redirectURI,
-    oauthToken,
-  };
   res.render("auth-login", {
     title: "Login with Twitter | Solotter",
     csrfToken: req.csrfToken(),
@@ -37,6 +32,11 @@ router.get("/login", async (req, res, _next) => {
 });
 
 router.post("/login", async (req, res, _next) => {
+  const { redirectURI, oauthToken } = await twitterAppService.authenticate();
+  req.session.twitterOAuth = {
+    redirectURI,
+    oauthToken,
+  };
   res.redirect(req.session.twitterOAuth.redirectURI);
 });
 
