@@ -31,7 +31,7 @@ router.get("/login", async (req, res, _next) => {
     oauthToken,
   };
   res.render("auth-login", {
-    title: "Login with Twitter",
+    title: "Login with Twitter | Solotter",
   });
 });
 

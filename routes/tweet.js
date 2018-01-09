@@ -28,7 +28,7 @@ router.get("/", (req, res, _next) => {
   const screenName = req.session.twitter.user.screenName;
 
   res.render("tweet", {
-    title: "Tweet",
+    title: "Tweet | Solotter",
     twitterUser: {
       screenName: `@${screenName}`
     },
