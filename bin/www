@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+
+const SolotterServer = require("../server");
+
+new SolotterServer().run();
