@@ -7,7 +7,6 @@ var cookieSession = require('cookie-session');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
 const authRouter = require("./routes/auth");
 const tweetRouter = require("./routes/tweet");
 
@@ -34,7 +33,6 @@ app.use(cookieSession({
 }));
 
 app.use('/', index);
-app.use('/users', users);
 app.use("/auth", authRouter);
 app.use("/tweet", tweetRouter);
 
