@@ -16,6 +16,7 @@ block content
       required
       max-length=280
     )
+    input(type="hidden" name="_csrf" value=csrfToken)
     button(type="submit") Submit
 
   p= status
@@ -25,4 +26,5 @@ block content
     action="/auth/logout"
     method="POST"
   )
+    input(type="hidden" name="_csrf" value=csrfToken)
     button(type="submit") Logout

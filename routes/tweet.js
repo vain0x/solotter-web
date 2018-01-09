@@ -34,6 +34,7 @@ router.get("/", (req, res, _next) => {
     },
     status: req.query.status,
     errorMessage: req.query.error_message,
+    csrfToken: req.csrfToken(),
   });
 });
 

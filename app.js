@@ -4,11 +4,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
+var csurf = require('csurf');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 const authRouter = require("./routes/auth");
 const tweetRouter = require("./routes/tweet");
+
 
 var app = express();
 
@@ -22,6 +24,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(csurf({ cookie: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Add cookie-based session management middleware.

@@ -32,6 +32,7 @@ router.get("/login", async (req, res, _next) => {
   };
   res.render("auth-login", {
     title: "Login with Twitter | Solotter",
+    csrfToken: req.csrfToken(),
   });
 });
 
