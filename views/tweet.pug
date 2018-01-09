@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  h1= title
+  form(
+    action="/tweet/post-tweet"
+    method="POST"
+    style="width: 600px;"
+  )
+    p #{twitterUser.screenName}
+    textarea(
+      name="tweet_content"
+      placeholder="What are you doing?"
+      style="width: 100%;"
+      rows=4
+      required
+      max-length=280
+    )
+    input(type="hidden" name="_csrf" value=csrfToken)
+    button(type="submit") Submit
+
+  p= status
+
+  h2 Logout
+  form(
+    action="/auth/logout"
+    method="POST"
+  )
+    input(type="hidden" name="_csrf" value=csrfToken)
+    button(type="submit") Logout
