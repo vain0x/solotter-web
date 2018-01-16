@@ -8,7 +8,7 @@ var csurf = require('csurf');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-const authRouter = require("./routes/auth");
+const { authRouter } = require("./routes/auth");
 const tweetRouter = require("./routes/tweet");
 
 var app = express();
