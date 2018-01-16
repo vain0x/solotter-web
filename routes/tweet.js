@@ -6,7 +6,8 @@ const router = express.Router();
 const twitterAppService = new TwitterAppService();
 
 const createTwitterUserService = req => {
-  return twitterAppService.userService(req.session.twitter.accessToken);
+  const t = req.session.twitter;
+  return twitterAppService.userService(t.accessToken, t.user);
 };
 
 router.all("*", auth.requireAuthMiddleware);
@@ -40,4 +41,7 @@ router.post("/post-tweet", (req, res, _next) => {
     });
 });
 
-module.exports = router;
+module.exports = {
+  createTwitterUserService,
+  tweetRouter: router,
+};

@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  h1= title
+
+  main(class="list-edit-main")
+    form(
+      action=""
+      method="POST"
+    )
+      input(type="hidden", name="_csrf", value=_csrf)
+
+      label Source:
+        textarea(
+          name="source"
+          placeholder="source"
+          rows=6
+          required
+        )= bag.source
+
+      label List slug:
+        input(
+          type="text"
+          name="slug"
+          required
+          maxlength=25
+          pattern="[\\w_][\\w\\d_-]*"
+          value=bag.slug
+        )
+
+      button(type="submit") Save
+
+    p= status

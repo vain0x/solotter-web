@@ -9,7 +9,8 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 const { authRouter } = require("./routes/auth");
-const tweetRouter = require("./routes/tweet");
+const { tweetRouter } = require("./routes/tweet");
+const { listRouter } = require("./routes/list");
 
 var app = express();
 
@@ -37,6 +38,7 @@ app.use(cookieSession({
 app.use('/', index);
 app.use("/auth", authRouter);
 app.use("/tweet", tweetRouter);
+app.use("/list", listRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1= title
+
+  h2 Actions
+  form(method="POST")
+    input(type="hidden", name="_csrf" ,value=_csrf)
+    ul
+      li
+        a(href="/list/edit?slug=@friends") Edit friends
+      li
+        button(type="button", formaction="/list/export", disabled) Export all

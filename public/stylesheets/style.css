@@ -27,6 +27,15 @@ body > main {
   width: 100%;
 }
 
+.list-edit-main textarea {
+  width: 100%;
+}
+
+.list-edit-main input[type="text"] {
+  display: block;
+  width: 200px;
+}
+
 @media (max-width: 1200px) {
   body {
     padding: 12px;
