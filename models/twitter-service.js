@@ -1,3 +1,4 @@
+const { URL, URLSearchParams } = require("url");
 const Twitter = require("twitter");
 const { OAuth } = require('oauth');
 
@@ -158,25 +159,50 @@ class TwitterUserService {
     return await this.listMembers(slug);
   }
 
+  chunkify(xs, limit) {
+    const xss = [];
+    for (let i = 0; i < xs.length; i += limit) {
+      const chunk = xs.slice(i * limit, (i + 1) * limit);
+      if (chunk.length === 0) throw new Error("Should be nonempty.");
+      xss.push(chunk);
+    }
+    return xss;
+  }
+
   async addMembers(slug, screenNames) {
+    console.error(`Adding members to ${slug}: ${screenNames.join(",")}`);
+
     const limit = 100;
-    for (var i = 0; i < (screenNames.length + limit - 1) / limit; i++) {
-      await this.twitterClient.post("lists/members/create_all", {
+    for (const paginatedScreenNames in this.chunkify(screenNames, limit)) {
+      if (paginatedScreenNames.length === 0) continue;
+
+      // NOTE: Must pass parameters via query string rather than body (FormData format).
+      // Because `post` adds ".json" to the end of url, end url with dummy parameter.
+      const query = new URLSearchParams({
         owner_screen_name: this.user.screenName,
         slug,
-        screen_name: screenNames.slice(i * limit, (i + 1) * limit).join(","),
+        screen_name: paginatedScreenNames,
       });
+      await this.twitterClient.post(`lists/members/create_all.json?${query.toString()}&dummy=`, {});
     }
   }
 
   async removeMembers(slug, screenNames) {
+    // Essentially same as addMembers.
+
+    console.error(`Removing members from ${slug}: ${screenNames.join(",")}`);
     const limit = 100;
-    for (var i = 0; i < (screenNames.length + limit - 1) / limit; i++) {
-      await this.twitterClient.post("lists/members/destroy_all", {
+    for (const paginatedScreenNames in this.chunkify(screenNames, limit)) {
+      if (paginatedScreenNames.length === 0) continue;
+
+      // NOTE: Must pass parameters via query string rather than body (FormData format).
+      // Because `post` adds ".json" to the end of url, end url with dummy parameter.
+      const query = new URLSearchParams({
         owner_screen_name: this.user.screenName,
         slug,
-        screen_name: screenNames.slice(i * limit, (i + 1) * limit).join(","),
+        screen_name: paginatedScreenNames,
       });
+      await this.twitterClient.post(`lists/members/destroy_all.json?${query.toString()}&dummy=`, {});
     }
   }
 

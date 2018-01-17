@@ -50,7 +50,7 @@ router.post("/edit", async (request, response, next) => {
     const source = request.body.source || undefined;
 
     if (slug === undefined || source === undefined) {
-      throw new Error();
+      return next("Invalid request.");
     }
 
     const tus = tweet.createTwitterUserService(request);
@@ -58,9 +58,7 @@ router.post("/edit", async (request, response, next) => {
     try {
       await tus.importList(slug, source);
     } catch (ex) {
-      console.error(ex);
-      response.header("Content-type", "text/plain");
-      response.write("ERROR!");
+      next(ex);
       return;
     }
 
@@ -72,7 +70,6 @@ router.post("/edit", async (request, response, next) => {
       _csrf: request.csrfToken(),
     });
   } catch (ex) {
-    console.error(ex);
     next(ex);
   }
 });
