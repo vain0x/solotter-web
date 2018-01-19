@@ -1,6 +1,7 @@
 const { URL, URLSearchParams } = require("url");
 const Twitter = require("twitter");
 const { OAuth } = require('oauth');
+const Enumerable = require("linq");
 
 class TwitterAppService {
   constructor() {
@@ -138,20 +139,16 @@ class TwitterUserService {
       "include_user_entities": false,
     };
     const results =
-      await this.fetchCursor(
-        option,
-        option => this.twitterClient.get("friends/list", option)
-      );
-    const users = [];
-    for (const result in results) {
-      for (const user of result["users"]) {
-        users.push({
-          userId: user["id"],
-          screenName: user["screen_name"],
-          name: user["name"],
-        });
-      }
-    }
+      await this.fetchCursor(option, option => this.twitterClient.get("friends/list", option));
+    const users =
+      Enumerable.from(results)
+      .selectMany(result => result["users"])
+      .select(user => ({
+        userId: user["id"],
+        screenName: user["screen_name"],
+        name: user["name"],
+      }))
+      .toArray();
     return users;
   }
 
