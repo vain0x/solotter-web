@@ -54,9 +54,10 @@ class TwitterAppService {
         resolve({
           twitter: {
             accessToken: {
+              consumerKey: this.accessToken.consumerKey,
+              consumerSecret: this.accessToken.consumerSecret,
               accessTokenKey,
               accessTokenSecret,
-              ...this.accessToken,
             },
             user: {
               screenName: results["screen_name"],
