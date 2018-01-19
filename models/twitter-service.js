@@ -223,7 +223,6 @@ class TwitterUserService {
     const { addedUsers, removedUsers } = diff;
     if (slug === "@friends") {
       throw new Error("NOT SUPPORTED.");
-      return;
     }
 
     await this.removeMembers(slug, removedUsers.map(u => u.screenName));
