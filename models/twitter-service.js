@@ -131,9 +131,9 @@ class TwitterUserService {
     }));
   }
 
-  async friends() {
+  async friends(screenName) {
     const option = {
-      "screen_name": this.user.screenName,
+      "screen_name": screenName,
       "count": 5000,
       "skip_status": true,
       "include_user_entities": false,
@@ -152,10 +152,10 @@ class TwitterUserService {
     return users;
   }
 
-  async listMembers(slug) {
+  async listMembers(slug, ownerScreenName) {
     const option = {
       "slug": slug,
-      "owner_screen_name": this.user.screenName,
+      "owner_screen_name": ownerScreenName,
       "count": 5000,
       "skip_status": true,
       "include_user_entities": false,
@@ -177,10 +177,10 @@ class TwitterUserService {
 
   async members(slug) {
     if (slug === "@friends") {
-      return await this.friends();
+      return await this.friends(this.user.screenName);
     }
 
-    return await this.listMembers(slug);
+    return await this.listMembers(slug, this.user.screenName);
   }
 
   chunkify(xs, limit) {
