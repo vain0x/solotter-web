@@ -229,7 +229,7 @@ class TwitterUserService {
     console.error(`Adding members to ${slug}: ${screenNames.join(",")}`);
 
     const limit = 100;
-    for (const paginatedScreenNames in this.chunkify(screenNames, limit)) {
+    for (const paginatedScreenNames of this.chunkify(screenNames, limit)) {
       if (paginatedScreenNames.length === 0) continue;
 
       // NOTE: Must pass parameters via query string rather than body (FormData format).
@@ -248,7 +248,7 @@ class TwitterUserService {
 
     console.error(`Removing members from ${slug}: ${screenNames.join(",")}`);
     const limit = 100;
-    for (const paginatedScreenNames in this.chunkify(screenNames, limit)) {
+    for (const paginatedScreenNames of this.chunkify(screenNames, limit)) {
       if (paginatedScreenNames.length === 0) continue;
 
       // NOTE: Must pass parameters via query string rather than body (FormData format).
