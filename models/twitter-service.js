@@ -153,19 +153,26 @@ class TwitterUserService {
   }
 
   async listMembers(slug) {
-    const r = await this.twitterClient.get("lists/members", {
-      slug,
-      owner_screen_name: this.user.screenName,
-      count: 5000,
-      skip_status: true,
-      include_user_entities: false,
-    });
+    const option = {
+      "slug": slug,
+      "owner_screen_name": this.user.screenName,
+      "count": 5000,
+      "skip_status": true,
+      "include_user_entities": false,
+    };
 
-    return r["users"].map(user => ({
-      userId: user["id"],
-      screenName: user["screen_name"],
-      name: user["name"],
-    }));
+    const results =
+      await this.fetchCursor(option, option => this.twitterClient.get("lists/members", option));
+    const users =
+      Enumerable.from(results)
+      .selectMany(result => result["users"])
+      .select(user => ({
+        userId: user["id"],
+        screenName: user["screen_name"],
+        name: user["name"],
+      }))
+      .toArray();
+    return users;
   }
 
   async members(slug) {
