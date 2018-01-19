@@ -87,6 +87,31 @@ class TwitterUserService {
     this.user = user;
   }
 
+  /**
+   * Performs fetch operations, moving the cursor to end.
+   */
+  async fetchCursor(option, fetch) {
+    if (option["cursor"] !== undefined) {
+      throw new Error("Don't specify cursor.");
+    }
+
+    const localOption = Object.assign({}, option);
+    localOption["cursor"] = -1;
+
+    const results = [];
+
+    while (true) {
+      const result = await fetch(localOption);
+      results.push(result);
+
+      const nextCursor = result["next_cursor"];
+      if (nextCursor === 0) break;
+      localOption["cursor"] = nextCursor;
+    }
+
+    return results;
+  }
+
   async postTweet(status) {
     return await this.twitterClient.post(
       "statuses/update",
@@ -106,33 +131,27 @@ class TwitterUserService {
   }
 
   async friends() {
-    const users = [];
-
     const option = {
-      screen_name: this.user.screenName,
-      count: 5000,
-      skip_status: true,
-      include_user_entities: false,
-      cursor: -1,
+      "screen_name": this.user.screenName,
+      "count": 5000,
+      "skip_status": true,
+      "include_user_entities": false,
     };
-
-    while (true) {
-      const r = await this.twitterClient.get("friends/list", option);
-
-      for (const user of r["users"]) {
+    const results =
+      await this.fetchCursor(
+        option,
+        option => this.twitterClient.get("friends/list", option)
+      );
+    const users = [];
+    for (const result in results) {
+      for (const user of result["users"]) {
         users.push({
           userId: user["id"],
           screenName: user["screen_name"],
           name: user["name"],
         });
       }
-
-      const nextCursor = r["next_cursor"];
-      if (nextCursor === 0) break;
-
-      option["cursor"] = nextCursor;
     }
-
     return users;
   }
 
