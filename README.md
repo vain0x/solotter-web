@@ -1,4 +1,4 @@
- # Solotter
+# Solotter
 
 [TRY NOW!](https://solotter-web.herokuapp.com/)
 

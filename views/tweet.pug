@@ -3,15 +3,15 @@ extends layout
 block content
   h1= title
   form(
+    class="tweet-form"
     action="/tweet/post-tweet"
     method="POST"
-    style="width: 600px;"
   )
     p #{twitterUser.screenName}
     textarea(
+      class="tweet-form-textbox"
       name="tweet_content"
       placeholder="What are you doing?"
-      style="width: 100%;"
       rows=4
       required
       max-length=280
