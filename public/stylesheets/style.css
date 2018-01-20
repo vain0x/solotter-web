@@ -8,3 +8,11 @@ body > main {
   max-width: 1200px;
   margin: 0 auto;
 }
+
+.tweet-form {
+  width: 600px;
+}
+
+.tweet-form .tweet-form-textbox {
+  width: 100%;
+}
