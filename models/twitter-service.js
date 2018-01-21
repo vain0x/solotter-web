@@ -1,6 +1,6 @@
 const Twitter = require("twitter");
 const { TwitterAppAPI } = require("./twitter-api");
-const { UserGroupFactory, diffUserList } = require("./user-group");
+const { UserGroupFactory, diffUserList, fetchOwnedListSlugs } = require("./user-group");
 
 /**
  * Represents a twitter app, not requiring user authentication.
@@ -60,12 +60,14 @@ class TwitterUserService {
     );
   }
 
-  async lists() {
-    const r = await this.twitterClient.get("lists/list", {});
-    return r.map(list => ({
-      slung: list.slung,
-      name: list.name,
-    }));
+  async allUserGroups() {
+    const screenName = this.user.screenName;
+    const twitterClient = this.twitterClient;
+
+    const listSlugs = await fetchOwnedListSlugs(screenName, twitterClient);
+    const userGroups = UserGroupFactory.all(screenName, listSlugs, twitterClient);
+
+    return userGroups;
   }
 
   async exportList(userGroupPath) {

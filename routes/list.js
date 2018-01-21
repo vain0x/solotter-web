@@ -39,7 +39,6 @@ router.get("/edit", async (request, response, next) => {
       _csrf: request.csrfToken(),
     });
   } catch (ex) {
-    console.error(ex);
     next(ex);
   }
 });
@@ -74,13 +73,14 @@ router.post("/edit", async (request, response, next) => {
   }
 });
 
-router.get("/show/all", async (request, response, _next) => {
+router.get("/all", async (request, response, _next) => {
   const tus = tweet.createTwitterUserService(request);
-  const lists = await tus.lists();
+  const userGroups = await tus.allUserGroups();
 
-  response.render("list-index", {
-    title: "Your Lists",
-    lists,
+  response.render("user-group-all", {
+    title: "Owned User Groups",
+    userGroups:
+      userGroups.map(userGroup => ({ path: userGroup.path, slug: userGroup.userGroupKey.slug })),
     _csrf: request.csrfToken(),
   });
 });

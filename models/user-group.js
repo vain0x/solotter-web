@@ -22,11 +22,19 @@ const UserGroupPathFormat = new class {
     const type = slug === "_friends" || slug === "_followers" ? slug.substr(1) : "list";
     return { type, ownerScreenName, slug };
   }
+
+  unparse(userGroupKey) {
+    return `@${userGroupKey.ownerScreenName}/${userGroupKey.slug}`;
+  }
 };
 
 const UserGroupFactory = new class {
   fromPath(userGroupPath, defaultScreenName, twitterClient) {
     const userGroupKey = UserGroupPathFormat.parse(userGroupPath, defaultScreenName);
+    return this.fromKey(userGroupKey, twitterClient);
+  }
+
+  fromKey(userGroupKey, twitterClient) {
     switch (userGroupKey.type) {
       case "friends":
         return new FriendsUserGroup(userGroupKey, twitterClient);
@@ -38,21 +46,39 @@ const UserGroupFactory = new class {
         throw new Error("Invalid group type.");
     }
   }
+
+  all(screenName, listSlugs, twitterClient) {
+    const keys =
+      Enumerable
+        .from([
+          { ownerScreenName: screenName, type: FriendsUserGroup.type(), slug: "_friends" },
+          { ownerScreenName: screenName, type: FollowersUserGroup.type(), slug: "_followers" },
+        ])
+        .concat(listSlugs.map(slug => {
+          return { ownerScreenName: screenName, type: ListUserGroup.type(), slug };
+        }));
+    const userGroups = keys.select(key => this.fromKey(key, twitterClient));
+    return userGroups.toArray();
+  }
 };
 
 class FriendsUserGroup {
-  constructor(group, twitterClient) {
-    this.group = group;
-    this.twitterClient = twitterClient;
-
-    if (this.group !== FriendsUserGroup.type) {
+  constructor(userGroupKey, twitterClient) {
+    if (userGroupKey !== FriendsUserGroup.type) {
       throw new Error("Invalid group type.");
     }
+
+    this.userGroupKey = userGroupKey;
+    this.twitterClient = twitterClient;
+  }
+
+  get path() {
+    return UserGroupPathFormat.unparse(this.userGroupKey);
   }
 
   async fetchMembers() {
     const option = {
-      "screen_name": this.group.ownerScreenName,
+      "screen_name": this.userGroupKey.ownerScreenName,
       "count": 5000,
       "skip_status": true,
       "include_user_entities": false,
@@ -85,19 +111,23 @@ class FriendsUserGroup {
 }
 
 class FollowersUserGroup {
-  constructor(group, twitterClient) {
-    this.group = group;
-    this.twitterClient = twitterClient;
-
-    if (group !== FollowersUserGroup.type) {
+  constructor(userGroupKey, twitterClient) {
+    if (userGroupKey !== FollowersUserGroup.type) {
       throw new Error("Invalid group type.");
     }
+
+    this.userGroupKey = userGroupKey;
+    this.twitterClient = twitterClient;
+  }
+
+  get path() {
+    return UserGroupPathFormat.unparse(this.userGroupKey);
   }
 
   async fetchMembers() {
     // Almost the same as friends.
     const option = {
-      "screen_name": this.group.ownerScreenName,
+      "screen_name": this.userGroupKey.ownerScreenName,
       "count": 5000,
       "skip_status": true,
       "include_user_entities": false,
@@ -130,13 +160,17 @@ class FollowersUserGroup {
 }
 
 class ListUserGroup {
-  consturctor(group, twitterClient) {
-    this.group = group;
-    this.twitterClient = twitterClient;
-
-    if (group !== ListUserGroup.type) {
+  consturctor(userGroupKey, twitterClient) {
+    if (userGroupKey !== ListUserGroup.type) {
       throw new Error("Invalid group type.");
     }
+
+    this.userGroupKey = userGroupKey;
+    this.twitterClient = twitterClient;
+  }
+
+  get path() {
+    return UserGroupPathFormat.unparse(this.userGroupKey);
   }
 
   async fetchMembers(group, twitterClient) {
@@ -172,8 +206,8 @@ class ListUserGroup {
       // Because `post` adds ".json" to the end of url, end url with dummy parameter.
       // URLSearchParams joins array of string with ",".
       const query = new URLSearchParams({
-        owner_screen_name: this.group.ownerScreenName,
-        slug: this.group.slug,
+        owner_screen_name: this.userGroupKey.ownerScreenName,
+        slug: this.userGroupKey.slug,
         screen_name: userChunk.map(user => user.screenName),
       });
       await this.twitterClient.post(`lists/members/create_all.json?${query.toString()}&dummy=`, {});
@@ -191,8 +225,8 @@ class ListUserGroup {
       // Because `post` adds ".json" to the end of url, end url with dummy parameter.
       // URLSearchParams joins array of string with ",".
       const query = new URLSearchParams({
-        owner_screen_name: this.group.ownerScreenName,
-        slug: this.group.slug,
+        owner_screen_name: this.userGroupKey.ownerScreenName,
+        slug: this.userGroupKey.slug,
         screen_name: userChunk.map(user => user.screenName),
       });
       await this.twitterClient.post(`lists/members/destroy_all.json?${query.toString()}&dummy=`, {});
@@ -256,10 +290,27 @@ const Util = new class {
       newUsers.filter(user => !oldUserScreenNames.has(user.screenName));
     return { oldUsers, newUsers, removedUsers, addedUsers };
   }
+
+  async fetchOwnedListSlugs(screenName, twitterClient) {
+    const option =
+      {
+        screen_name: screenName,
+        count: 1000,
+      };
+    const results = await this.fetchCursor(option, option => twitterClient.get("lists/ownerships", option));
+    const slugs =
+      Enumerable
+        .from(results)
+        .selectMany(r => r["lists"])
+        .select(list => list.slug)
+        .toArray();
+    return slugs;
+  }
 }
 
 module.exports = {
   UserGroupPathFormat,
   UserGroupFactory,
   diffUserList: Util.diffUserList,
+  fetchOwnedListSlugs: Util.fetchOwnedListSlugs,
 };
