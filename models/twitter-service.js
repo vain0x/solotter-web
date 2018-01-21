@@ -2,6 +2,7 @@ const { URL, URLSearchParams } = require("url");
 const Twitter = require("twitter");
 const { OAuth } = require('oauth');
 const Enumerable = require("linq");
+const { TwitterAppAPI } = require("./twitter-api");
 
 /**
  * Represents a twitter app, not requiring user authentication.
@@ -10,76 +11,33 @@ class TwitterAppService {
   constructor() {
     const e = process.env;
 
-    this.accessToken = {
+    const accessToken = {
       consumerKey: e.TWITTER_CONSUMER_KEY,
       consumerSecret: e.TWITTER_CONSUMER_SECRET,
     };
 
-    this.oa = new OAuth(
-      "https://twitter.com/oauth/request_token",
-      "https://twitter.com/oauth/access_token",
-      this.accessToken.consumerKey,
-      this.accessToken.consumerSecret,
-      "1.0",
-      e.TWITTER_OAUTH_CALLBACK_URI,
-      "HMAC-SHA1"
-    );
+    const callbackURI = e.TWITTER_OAUTH_CALLBACK_URI;
+
+    this.api = new TwitterAppAPI(accessToken, callbackURI);
   }
 
   authenticate() {
-    return new Promise((resolve, reject) => {
-      this.oa.getOAuthRequestToken((error, oauthTokenKey, oauthTokenSecret) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-
-        const redirectURI = `https://twitter.com/oauth/authenticate?oauth_token=${oauthTokenKey}`;
-        resolve({
-          redirectURI,
-          oauthToken: {
-            oauthTokenKey,
-            oauthTokenSecret,
-          },
-        });
-      });
-    });
+    return this.api.authenticate();
   }
 
   acceptAuthenticationCallback(oauthToken, oauthVerifier) {
-    return new Promise((resolve, reject) => {
-      this.oa.getOAuthAccessToken(oauthToken.oauthTokenKey, oauthToken.oauthTokenSecret, oauthVerifier, (error, accessTokenKey, accessTokenSecret, results) => {
-        console.log(results);
-        if (error) {
-          reject(error);
-          return;
-        }
-
-        resolve({
-          twitter: {
-            accessToken: {
-              consumerKey: this.accessToken.consumerKey,
-              consumerSecret: this.accessToken.consumerSecret,
-              accessTokenKey,
-              accessTokenSecret,
-            },
-            user: {
-              screenName: results["screen_name"],
-            },
-          },
-        });
-      });
-    });
+    return this.api.acceptAuthenticationCallback(oauthToken, oauthVerifier);
   }
 
   userService(accessToken, user) {
     const a = accessToken;
-    const twitterClient = new Twitter({
-      consumer_key: a.consumerKey,
-      consumer_secret: a.consumerSecret,
-      access_token_key: a.accessTokenKey,
-      access_token_secret: a.accessTokenSecret,
-    });
+    const twitterClient =
+      new Twitter({
+        consumer_key: a.consumerKey,
+        consumer_secret: a.consumerSecret,
+        access_token_key: a.accessTokenKey,
+        access_token_secret: a.accessTokenSecret,
+      });
 
     return new TwitterUserService(twitterClient, user);
   }
@@ -148,13 +106,13 @@ class TwitterUserService {
       await this.fetchCursor(option, option => this.twitterClient.get("friends/list", option));
     const users =
       Enumerable.from(results)
-      .selectMany(result => result["users"])
-      .select(user => ({
-        userId: user["id"],
-        screenName: user["screen_name"],
-        name: user["name"],
-      }))
-      .toArray();
+        .selectMany(result => result["users"])
+        .select(user => ({
+          userId: user["id"],
+          screenName: user["screen_name"],
+          name: user["name"],
+        }))
+        .toArray();
     return users;
   }
 
@@ -170,13 +128,13 @@ class TwitterUserService {
       await this.fetchCursor(option, option => this.twitterClient.get("followers/list", option));
     const users =
       Enumerable.from(results)
-      .selectMany(result => result["users"])
-      .select(user => ({
-        userId: user["id"],
-        screenName: user["screen_name"],
-        name: user["name"],
-      }))
-      .toArray();
+        .selectMany(result => result["users"])
+        .select(user => ({
+          userId: user["id"],
+          screenName: user["screen_name"],
+          name: user["name"],
+        }))
+        .toArray();
     return users;
   }
 
@@ -194,13 +152,13 @@ class TwitterUserService {
       await this.fetchCursor(option, option => this.twitterClient.get("lists/members", option));
     const users =
       Enumerable.from(results)
-      .selectMany(result => result["users"])
-      .select(user => ({
-        userId: user["id"],
-        screenName: user["screen_name"],
-        name: user["name"],
-      }))
-      .toArray();
+        .selectMany(result => result["users"])
+        .select(user => ({
+          userId: user["id"],
+          screenName: user["screen_name"],
+          name: user["name"],
+        }))
+        .toArray();
     return users;
   }
 
