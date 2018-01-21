@@ -1,9 +1,6 @@
-const { URL, URLSearchParams } = require("url");
 const Twitter = require("twitter");
-const { OAuth } = require('oauth');
-const Enumerable = require("linq");
 const { TwitterAppAPI } = require("./twitter-api");
-const { GroupPathFormat } = require("./user-group");
+const { UserGroupFactory, diffUserList } = require("./user-group");
 
 /**
  * Represents a twitter app, not requiring user authentication.
@@ -53,31 +50,6 @@ class TwitterUserService {
     this.user = user;
   }
 
-  /**
-   * Performs fetch operations, moving the cursor to end.
-   */
-  async fetchCursor(option, fetch) {
-    if (option["cursor"] !== undefined) {
-      throw new Error("Don't specify cursor.");
-    }
-
-    const localOption = Object.assign({}, option);
-    localOption["cursor"] = -1;
-
-    const results = [];
-
-    while (true) {
-      const result = await fetch(localOption);
-      results.push(result);
-
-      const nextCursor = result["next_cursor"];
-      if (nextCursor === 0) break;
-      localOption["cursor"] = nextCursor;
-    }
-
-    return results;
-  }
-
   async postTweet(status) {
     return await this.twitterClient.post(
       "statuses/update",
@@ -96,176 +68,19 @@ class TwitterUserService {
     }));
   }
 
-  async friends(screenName) {
-    const option = {
-      "screen_name": screenName,
-      "count": 5000,
-      "skip_status": true,
-      "include_user_entities": false,
-    };
-    const results =
-      await this.fetchCursor(option, option => this.twitterClient.get("friends/list", option));
-    const users =
-      Enumerable.from(results)
-        .selectMany(result => result["users"])
-        .select(user => ({
-          userId: user["id"],
-          screenName: user["screen_name"],
-          name: user["name"],
-        }))
-        .toArray();
-    return users;
-  }
-
-  async followers(screenName) {
-    // Almost the same as friends.
-    const option = {
-      "screen_name": screenName,
-      "count": 5000,
-      "skip_status": true,
-      "include_user_entities": false,
-    };
-    const results =
-      await this.fetchCursor(option, option => this.twitterClient.get("followers/list", option));
-    const users =
-      Enumerable.from(results)
-        .selectMany(result => result["users"])
-        .select(user => ({
-          userId: user["id"],
-          screenName: user["screen_name"],
-          name: user["name"],
-        }))
-        .toArray();
-    return users;
-  }
-
-  async listMembers(slug, ownerScreenName) {
-    // Almost the same as friends.
-    const option = {
-      "slug": slug,
-      "owner_screen_name": ownerScreenName,
-      "count": 5000,
-      "skip_status": true,
-      "include_user_entities": false,
-    };
-
-    const results =
-      await this.fetchCursor(option, option => this.twitterClient.get("lists/members", option));
-    const users =
-      Enumerable.from(results)
-        .selectMany(result => result["users"])
-        .select(user => ({
-          userId: user["id"],
-          screenName: user["screen_name"],
-          name: user["name"],
-        }))
-        .toArray();
-    return users;
-  }
-
-  parseGroupPath(groupPath, defaultScreenName) {
-    return GroupPathFormat.parse(groupPath, defaultScreenName);
-  }
-
-  /**
-   * Fetches members of the specified group.
-   * @param {*} group
-   */
-  async members(group) {
-    switch (group.type) {
-      case "friends":
-        return await this.friends(group.ownerScreenName);
-      case "followers":
-        return await this.followers(group.ownerScreenName);
-      case "list":
-        return await this.listMembers(group.slug, group.ownerScreenName);
-      default: throw new Error("Invalid group type");
-    }
-  }
-
-  chunkify(xs, limit) {
-    const xss = [];
-    for (let i = 0; i < xs.length; i += limit) {
-      const chunk = xs.slice(i * limit, (i + 1) * limit);
-      if (chunk.length === 0) throw new Error("Should be nonempty.");
-      xss.push(chunk);
-    }
-    return xss;
-  }
-
-  async addListMembers(slug, screenNames) {
-    console.error(`Adding members to ${slug}: ${screenNames.join(",")}`);
-
-    const limit = 100;
-    for (const paginatedScreenNames of this.chunkify(screenNames, limit)) {
-      if (paginatedScreenNames.length === 0) continue;
-
-      // NOTE: Must pass parameters via query string rather than body (FormData format).
-      // Because `post` adds ".json" to the end of url, end url with dummy parameter.
-      const query = new URLSearchParams({
-        owner_screen_name: this.user.screenName,
-        slug,
-        screen_name: paginatedScreenNames,
-      });
-      await this.twitterClient.post(`lists/members/create_all.json?${query.toString()}&dummy=`, {});
-    }
-  }
-
-  async removeListMembers(slug, screenNames) {
-    // Essentially same as addMembers.
-
-    console.error(`Removing members from ${slug}: ${screenNames.join(",")}`);
-    const limit = 100;
-    for (const paginatedScreenNames of this.chunkify(screenNames, limit)) {
-      if (paginatedScreenNames.length === 0) continue;
-
-      // NOTE: Must pass parameters via query string rather than body (FormData format).
-      // Because `post` adds ".json" to the end of url, end url with dummy parameter.
-      const query = new URLSearchParams({
-        owner_screen_name: this.user.screenName,
-        slug,
-        screen_name: paginatedScreenNames,
-      });
-      await this.twitterClient.post(`lists/members/destroy_all.json?${query.toString()}&dummy=`, {});
-    }
-  }
-
-  diffUserList(oldUsers, newUsers) {
-    const oldUserScreenNames =
-      new Set(oldUsers.map(user => user.screenName));
-    const newUserScreenNames =
-      new Set(newUsers.map(user => user.screenName));
-    const removedUsers =
-      oldUsers.filter(user => !newUserScreenNames.has(user.screenName));
-    const addedUsers =
-      newUsers.filter(user => !oldUserScreenNames.has(user.screenName));
-    return { addedUsers, removedUsers };
-  }
-
-  async applyDiff(group, diff) {
-    if (group.type !== "list") {
-      throw new Error("No support for importing to friends/followers.");
-    }
-
-    const { addedUsers, removedUsers } = diff;
-
-    await this.removeListMembers(group, removedUsers.map(u => u.screenName));
-    await this.addListMembers(group, addedUsers.map(u => u.screenName));
-  }
-
-  async exportList(slug) {
-    const group = this.parseGroupPath(slug, this.user.screenName);
-    const users = await this.members(group);
+  async exportList(userGroupPath) {
+    const userGroup = UserGroupFactory.fromPath(userGroupPath, this.user.screenName, this.twitterClient);
+    const users = await userGroup.fetchMembers();
     return JSON.stringify(users, null, "  ");
   }
 
-  async importList(slug, json) {
-    const group = this.parseGroupPath(slug, this.user.screenName);
+  async importList(userGroupPath, json) {
+    const userGroup = UserGroupFactory.fromPath(userGroupPath, this.user.screenName, this.twitterClient);
     const newUsers = JSON.parse(json);
 
-    const oldUsers = await this.members(group);
-    const diff = this.diffUserList(oldUsers, newUsers);
-    await this.applyDiff(group, diff);
+    const oldUsers = await userGroup.fetchMembers(userGroup);
+    const diff = diffUserList(oldUsers, newUsers);
+    await userGroup.patch(userGroup, diff);
   }
 }
 
