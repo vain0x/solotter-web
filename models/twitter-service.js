@@ -3,6 +3,9 @@ const Twitter = require("twitter");
 const { OAuth } = require('oauth');
 const Enumerable = require("linq");
 
+/**
+ * Represents a twitter app, not requiring user authentication.
+ */
 class TwitterAppService {
   constructor() {
     const e = process.env;
@@ -82,6 +85,9 @@ class TwitterAppService {
   }
 }
 
+/**
+ * Represents a twitter app, requiring user authentication.
+ */
 class TwitterUserService {
   constructor(twitterClient, user) {
     this.twitterClient = twitterClient;
@@ -153,10 +159,29 @@ class TwitterUserService {
   }
 
   async followers(screenName) {
-    throw new Error("not impl.");
+    // Almost the same as friends.
+    const option = {
+      "screen_name": screenName,
+      "count": 5000,
+      "skip_status": true,
+      "include_user_entities": false,
+    };
+    const results =
+      await this.fetchCursor(option, option => this.twitterClient.get("followers/list", option));
+    const users =
+      Enumerable.from(results)
+      .selectMany(result => result["users"])
+      .select(user => ({
+        userId: user["id"],
+        screenName: user["screen_name"],
+        name: user["name"],
+      }))
+      .toArray();
+    return users;
   }
 
   async listMembers(slug, ownerScreenName) {
+    // Almost the same as friends.
     const option = {
       "slug": slug,
       "owner_screen_name": ownerScreenName,
@@ -193,7 +218,7 @@ class TwitterUserService {
   parseGroupPath(groupPath, defaultScreenName) {
     const reg = new RegExp(String.raw`^(?:@([\w\d_-]+)/)?([\w\d_-]+)$`);
     const match = groupPath.match(reg);
-    if (match === null) throw Error("Invalid list path.");
+    if (match === null) throw Error("Invalid group path");
 
     const [, screenName, slug] = match;
     const ownerScreenName = screenName || defaultScreenName;
@@ -201,9 +226,11 @@ class TwitterUserService {
     return { type, ownerScreenName, slug };
   }
 
-  async members(slug) {
-    const group = this.parseGroupPath(slug, this.user.screenName);
-
+  /**
+   * Fetches members of the specified group.
+   * @param {*} group
+   */
+  async members(group) {
     switch (group.type) {
       case "friends":
         return await this.friends(group.ownerScreenName);
@@ -211,7 +238,7 @@ class TwitterUserService {
         return await this.followers(group.ownerScreenName);
       case "list":
         return await this.listMembers(group.slug, group.ownerScreenName);
-      default: throw new Error();
+      default: throw new Error("Invalid group type");
     }
   }
 
@@ -225,7 +252,7 @@ class TwitterUserService {
     return xss;
   }
 
-  async addMembers(slug, screenNames) {
+  async addListMembers(slug, screenNames) {
     console.error(`Adding members to ${slug}: ${screenNames.join(",")}`);
 
     const limit = 100;
@@ -243,7 +270,7 @@ class TwitterUserService {
     }
   }
 
-  async removeMembers(slug, screenNames) {
+  async removeListMembers(slug, screenNames) {
     // Essentially same as addMembers.
 
     console.error(`Removing members from ${slug}: ${screenNames.join(",")}`);
@@ -274,26 +301,30 @@ class TwitterUserService {
     return { addedUsers, removedUsers };
   }
 
-  async applyDiff(slug, diff) {
-    const { addedUsers, removedUsers } = diff;
-    if (slug === "@friends") {
-      throw new Error("NOT SUPPORTED.");
+  async applyDiff(group, diff) {
+    if (group.type !== "list") {
+      throw new Error("No support for importing to friends/followers.");
     }
 
-    await this.removeMembers(slug, removedUsers.map(u => u.screenName));
-    await this.addMembers(slug, addedUsers.map(u => u.screenName));
+    const { addedUsers, removedUsers } = diff;
+
+    await this.removeListMembers(group, removedUsers.map(u => u.screenName));
+    await this.addListMembers(group, addedUsers.map(u => u.screenName));
   }
 
   async exportList(slug) {
-    const users = await this.members(slug);
+    const group = this.parseGroupPath(slug, this.user.screenName);
+    const users = await this.members(group);
     return JSON.stringify(users, null, "  ");
   }
 
   async importList(slug, json) {
-    const oldUsers = await this.members(slug);
+    const group = this.parseGroupPath(slug, this.user.screenName);
     const newUsers = JSON.parse(json);
+
+    const oldUsers = await this.members(group);
     const diff = this.diffUserList(oldUsers, newUsers);
-    await this.applyDiff(slug, diff);
+    await this.applyDiff(group, diff);
   }
 }
 
