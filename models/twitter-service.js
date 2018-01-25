@@ -80,9 +80,9 @@ class TwitterUserService {
     const userGroup = UserGroupFactory.fromPath(userGroupPath, this.user.screenName, this.twitterClient);
     const newUsers = JSON.parse(json);
 
-    const oldUsers = await userGroup.fetchMembers(userGroup);
+    const oldUsers = await userGroup.fetchMembers();
     const diff = diffUserList(oldUsers, newUsers);
-    await userGroup.patch(userGroup, diff);
+    await userGroup.patch(diff);
   }
 }
 

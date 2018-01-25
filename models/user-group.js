@@ -1,4 +1,5 @@
 const Enumerable = require("linq");
+const { URLSearchParams } = require("url");
 
 const UserGroupPathFormat = new class {
   /**
@@ -64,7 +65,7 @@ const UserGroupFactory = new class {
 
 class FriendsUserGroup {
   constructor(userGroupKey, twitterClient) {
-    if (userGroupKey !== FriendsUserGroup.type) {
+    if (userGroupKey.type !== FriendsUserGroup.type) {
       throw new Error("Invalid group type.");
     }
 
@@ -112,7 +113,7 @@ class FriendsUserGroup {
 
 class FollowersUserGroup {
   constructor(userGroupKey, twitterClient) {
-    if (userGroupKey !== FollowersUserGroup.type) {
+    if (userGroupKey.type !== FollowersUserGroup.type) {
       throw new Error("Invalid group type.");
     }
 
@@ -160,8 +161,8 @@ class FollowersUserGroup {
 }
 
 class ListUserGroup {
-  consturctor(userGroupKey, twitterClient) {
-    if (userGroupKey !== ListUserGroup.type) {
+  constructor(userGroupKey, twitterClient) {
+    if (userGroupKey.type !== ListUserGroup.type) {
       throw new Error("Invalid group type.");
     }
 
@@ -173,18 +174,18 @@ class ListUserGroup {
     return UserGroupPathFormat.unparse(this.userGroupKey);
   }
 
-  async fetchMembers(group, twitterClient) {
+  async fetchMembers() {
     // Almost the same as friends.
     const option = {
-      "slug": group.slug,
-      "owner_screen_name": group.ownerScreenName,
+      "slug": this.userGroupKey.slug,
+      "owner_screen_name": this.userGroupKey.ownerScreenName,
       "count": 5000,
       "skip_status": true,
       "include_user_entities": false,
     };
 
     const results =
-      await Util.fetchCursor(option, option => twitterClient.get("lists/members", option));
+      await Util.fetchCursor(option, option => this.twitterClient.get("lists/members", option));
     const users =
       Enumerable.from(results)
         .selectMany(result => result["users"])
@@ -199,7 +200,7 @@ class ListUserGroup {
 
   async addMembers(users) {
     const limit = 100;
-    for (const userChunk of this.chunkify(users, limit)) {
+    for (const userChunk of Util.chunkify(users, limit)) {
       if (userChunk.length === 0) continue;
 
       // NOTE: Must pass parameters via query string rather than body (FormData format).
@@ -218,7 +219,7 @@ class ListUserGroup {
     // Essentially same as addMembers.
 
     const limit = 100;
-    for (const userChunk of this.chunkify(users, limit)) {
+    for (const userChunk of Util.chunkify(users, limit)) {
       if (userChunk.length === 0) continue;
 
       // NOTE: Must pass parameters via query string rather than body (FormData format).
@@ -240,6 +241,10 @@ class ListUserGroup {
     const { addedUsers, removedUsers } = diff;
     await this.removeMembers(removedUsers);
     await this.addMembers(addedUsers);
+  }
+
+  static get type() {
+    return "list";
   }
 }
 
@@ -272,7 +277,7 @@ const Util = new class {
   chunkify(xs, limit) {
     const xss = [];
     for (let i = 0; i < xs.length; i += limit) {
-      const chunk = xs.slice(i * limit, (i + 1) * limit);
+      const chunk = xs.slice(i, i + limit);
       if (chunk.length === 0) throw new Error("Should be nonempty.");
       xss.push(chunk);
     }
