@@ -4,10 +4,37 @@ const { TwitterAppService } = require("../models/twitter-service");
 const router = express.Router();
 const twitterAppService = new TwitterAppService();
 
+// The default end-point for logged-in users.
+const homePath = "/tweet";
+
 const isLoggedIn = req => {
   const t = req.session.twitter;
   if (t === undefined) return false;
   return t.accessToken !== undefined;
+};
+
+/**
+ * A middleware to require authentication if not.
+ */
+const requireAuthMiddleware = (req, res, next) => {
+  if (!isLoggedIn(req)) {
+    res.redirect("/auth/login");
+    return;
+  }
+
+  next();
+};
+
+/**
+ * A middleware to skip authentication if done.
+ */
+const skipAuthMiddleware = (req, res, next) => {
+  if (isLoggedIn(req)) {
+    res.redirect(homePath);
+    return;
+  }
+
+  next();
 };
 
 router.post("/logout", (req, res, _next) => {
@@ -15,14 +42,7 @@ router.post("/logout", (req, res, _next) => {
   res.redirect("/");
 });
 
-router.all("*", (req, res, next) => {
-  if (isLoggedIn(req)) {
-    res.redirect("/tweet");
-    return;
-  }
-
-  next();
-});
+router.all("*", skipAuthMiddleware);
 
 router.get("/login", async (req, res, _next) => {
   res.render("auth-login", {
@@ -52,7 +72,11 @@ router.get("/callback", async (req, res, _next) => {
   const { twitter } = await twitterAppService.acceptAuthenticationCallback(oauthToken, oauthVerifier);
 
   req.session.twitter = twitter;
-  res.redirect("/tweet");
+  res.redirect(homePath);
 });
 
-module.exports = router;
+module.exports = {
+  requireAuthMiddleware,
+  skipAuthMiddleware,
+  authRouter: router,
+};

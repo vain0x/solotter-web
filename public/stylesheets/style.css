@@ -27,6 +27,15 @@ body > main {
   width: 100%;
 }
 
+.user-group-edit-main textarea {
+  width: 100%;
+}
+
+.user-group-edit-main input[type="text"] {
+  display: block;
+  width: 300px;
+}
+
 @media (max-width: 1200px) {
   body {
     padding: 12px;
@@ -55,4 +64,9 @@ body > main {
   .tweet-form {
     width: 100%;
   }
+}
+
+code {
+  padding: 2px;
+  background-color: #f3f3f3;
 }
