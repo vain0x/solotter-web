@@ -27,11 +27,11 @@ body > main {
   width: 100%;
 }
 
-.list-edit-main textarea {
+.user-group-edit-main textarea {
   width: 100%;
 }
 
-.list-edit-main input[type="text"] {
+.user-group-edit-main input[type="text"] {
   display: block;
   width: 200px;
 }

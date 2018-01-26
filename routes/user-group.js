@@ -7,8 +7,8 @@ const router = express.Router();
 router.all("*", auth.requireAuthMiddleware);
 
 router.get("/", (request, response, _next) => {
-  response.render("list-index", {
-    title: "List Management",
+  response.render("user-group-index", {
+    title: "User Group Management",
     _csrf: request.csrfToken(),
   });
 });
@@ -20,7 +20,7 @@ const fetchEdit = async (slug, tus) => {
   }
 
   return {
-    title: "Edit List",
+    title: "Edit User Group",
     slug: slug,
     source: source || "",
   };
@@ -32,7 +32,7 @@ router.get("/edit", async (request, response, next) => {
     const tus = tweet.createTwitterUserService(request);
     const bag = await fetchEdit(slug, tus);
 
-    response.render("list-edit", {
+    response.render("user-group-edit", {
       title: bag.title,
       status: "",
       bag,
@@ -62,8 +62,8 @@ router.post("/edit", async (request, response, next) => {
     }
 
     const bag = await fetchEdit(slug, tus);
-    response.render("list-edit", {
-      title: "Edit List",
+    response.render("user-group-edit", {
+      title: "Edit User Group",
       status: "success",
       bag,
       _csrf: request.csrfToken(),
@@ -86,5 +86,5 @@ router.get("/all", async (request, response, _next) => {
 });
 
 module.exports = {
-  listRouter: router,
+  userGroupRouter: router,
 };
