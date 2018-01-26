@@ -5,7 +5,7 @@ const router = express.Router();
 const twitterAppService = new TwitterAppService();
 
 // The default end-point for logged-in users.
-const homePath = "/tweet";
+const homePath = "/tweet/";
 
 const isLoggedIn = req => {
   const t = req.session.twitter;
@@ -18,7 +18,7 @@ const isLoggedIn = req => {
  */
 const requireAuthMiddleware = (req, res, next) => {
   if (!isLoggedIn(req)) {
-    res.redirect("/auth/login");
+    res.redirect("/auth/login/");
     return;
   }
 
