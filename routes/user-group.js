@@ -1,6 +1,7 @@
 const express = require("express");
 const auth = require("./auth");
 const tweet = require("./tweet");
+const { UserGroupPathFormat } = require("../models/user-group");
 
 const router = express.Router();
 
@@ -22,6 +23,7 @@ const fetchEdit = async (slug, tus) => {
   return {
     title: "Edit User Group",
     slug: slug,
+    userGroupPathPattern: UserGroupPathFormat.regexpPattern,
     source: source || "",
   };
 };

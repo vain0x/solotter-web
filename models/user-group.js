@@ -14,7 +14,7 @@ const UserGroupPathFormat = new class {
    * @returns { type, ownerScreenName, slug }
    */
   parse(groupPath, defaultScreenName) {
-    const reg = new RegExp(String.raw`^(?:@([\w\d_-]+)/)?([\w\d_-]+)$`);
+    const reg = new RegExp(this.regexpPattern);
     const match = groupPath.match(reg);
     if (match === null) throw Error("Invalid group path");
 
@@ -26,6 +26,10 @@ const UserGroupPathFormat = new class {
 
   unparse(userGroupKey) {
     return `@${userGroupKey.ownerScreenName}/${userGroupKey.slug}`;
+  }
+
+  get regexpPattern() {
+    return String.raw`^(?:@([\w\d_-]+)/)?([\w\d_-]+)$`;
   }
 };
 

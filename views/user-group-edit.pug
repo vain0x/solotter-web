@@ -23,11 +23,43 @@ block content
           type="text"
           name="slug"
           required
-          maxlength=25
-          pattern="[\\w_][\\w\\d_-]*"
+          maxlength=128
+          pattern=bag.userGroupPathPattern
           value=bag.slug
         )
-
-      button(type="submit") Save
+      div
+        button(type="submit") Save
 
     p= status
+
+  section
+    h2 Syntax
+
+    pre
+      | &lt;user-group-path&gt; = [ "@" &lt;scree-name&gt; "/" ] &lt;user-group-slug&gt; ;
+      | &lt;user-group-slug&gt; = &lt;list-slug&gt; | "_friends" | "_followers" ;
+
+    h3 Examples
+    ul
+      li
+        code _followers
+        |
+        | is a group of users that follows you.
+      li
+        code @vain0x/_friends
+        |
+        | is a group of users that
+        |
+        code @vain0x
+        |
+        | follows.
+      li
+        code @vain0x/my-list
+        |
+        | is a group of users of
+        |
+        code @vain0x
+        | 's list
+        |
+        code my-list
+        | .

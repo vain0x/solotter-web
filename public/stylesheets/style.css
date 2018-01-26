@@ -33,7 +33,7 @@ body > main {
 
 .user-group-edit-main input[type="text"] {
   display: block;
-  width: 200px;
+  width: 300px;
 }
 
 @media (max-width: 1200px) {
@@ -64,4 +64,9 @@ body > main {
   .tweet-form {
     width: 100%;
   }
+}
+
+code {
+  padding: 2px;
+  background-color: #f3f3f3;
 }
