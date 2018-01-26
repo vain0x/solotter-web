@@ -17,7 +17,7 @@ router.get("/", (request, response, _next) => {
 const fetchEdit = async (slug, tus) => {
   let source = undefined;
   if (slug !== undefined) {
-    source = await tus.exportList(slug);
+    source = await tus.exportUserGroup(slug);
   }
 
   return {
@@ -57,7 +57,7 @@ router.post("/edit", async (request, response, next) => {
     const tus = tweet.createTwitterUserService(request);
 
     try {
-      await tus.importList(slug, source);
+      await tus.importUserGroup(slug, source);
     } catch (ex) {
       next(ex);
       return;

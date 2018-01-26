@@ -70,13 +70,13 @@ class TwitterUserService {
     return userGroups;
   }
 
-  async exportList(userGroupPath) {
+  async exportUserGroup(userGroupPath) {
     const userGroup = UserGroupFactory.fromPath(userGroupPath, this.user.screenName, this.twitterClient);
     const users = await userGroup.fetchMembers();
     return JSON.stringify(users, null, "  ");
   }
 
-  async importList(userGroupPath, json) {
+  async importUserGroup(userGroupPath, json) {
     const userGroup = UserGroupFactory.fromPath(userGroupPath, this.user.screenName, this.twitterClient);
     const newUsers = JSON.parse(json);
 
