@@ -10,12 +10,12 @@ const UserGroupPathFormat = new class {
    *  @john/some-list-slug (users of tha list 'some-list-slug' owned by @john),
    *  _friends (= @<login-user>/_friends),
    *  some-slug (= @<login-user>/some-slug).
-   * @param {*} groupPath
+   * @param {*} userGroupPath
    * @returns { type, ownerScreenName, slug }
    */
-  parse(groupPath, defaultScreenName) {
+  parse(userGroupPath, defaultScreenName) {
     const reg = new RegExp(this.regexpPattern);
-    const match = groupPath.match(reg);
+    const match = userGroupPath.match(reg);
     if (match === null) throw Error("Invalid group path");
 
     const [, screenName, slug] = match;
