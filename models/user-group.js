@@ -14,6 +14,12 @@ const UserGroupPathFormat = new class {
    * @returns { type, ownerScreenName, slug }
    */
   parse(userGroupPath, defaultScreenName) {
+    userGroupPath = (userGroupPath || "").trim();
+
+    if (userGroupPath === "") {
+      return EmptyUserGroup.userGroupKey;
+    }
+
     const reg = new RegExp(this.regexpPattern);
     const match = userGroupPath.match(reg);
     if (match === null) throw Error("Invalid group path");
@@ -25,6 +31,10 @@ const UserGroupPathFormat = new class {
   }
 
   unparse(userGroupKey) {
+    if (userGroupKey.type === EmptyUserGroup.type) {
+      return "";
+    }
+
     return `@${userGroupKey.ownerScreenName}/${userGroupKey.slug}`;
   }
 
@@ -41,6 +51,8 @@ const UserGroupFactory = new class {
 
   fromKey(userGroupKey, twitterClient) {
     switch (userGroupKey.type) {
+      case "empty":
+        return EmptyUserGroup;
       case "friends":
         return new FriendsUserGroup(userGroupKey, twitterClient);
       case "followers":
@@ -249,6 +261,30 @@ class ListUserGroup {
 
   static get type() {
     return "list";
+  }
+}
+
+const EmptyUserGroup = new class {
+  get path() {
+    return "";
+  }
+
+  async fetchMembers() {
+    return [];
+  }
+
+  async addMembers() {
+  }
+
+  async removeMembers() {
+  }
+
+  get type() {
+    return "empty";
+  }
+
+  get userGroupKey() {
+    return { type: this.type, ownerScreenName: "", slug: "" };
   }
 }
 

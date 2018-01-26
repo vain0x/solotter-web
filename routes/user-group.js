@@ -30,7 +30,7 @@ const fetchEdit = async (slug, tus) => {
 
 router.get("/edit", async (request, response, next) => {
   try {
-    const slug = request.query.slug || undefined;
+    const slug = request.query.slug || "";
     const tus = tweet.createTwitterUserService(request);
     const bag = await fetchEdit(slug, tus);
 
