@@ -33,11 +33,11 @@ router.post("/post-tweet", (req, res, _next) => {
 
   twitterUserService.postTweet(content).then(
     _ => {
-      res.redirect("/tweet?status=success");
+      res.redirect("/tweet/?status=success");
     },
     error => {
       console.error(error);
-      res.redirect("/tweet?status=error");
+      res.redirect("/tweet/?status=error");
     });
 });
 
