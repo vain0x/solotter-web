@@ -8,7 +8,8 @@
   "main": "main.js",
   "scripts": {
     "start": "node main.js",
-    "watch": "echo 'See http://127.0.0.1:5000' && npx nodemon --exec \"heroku local web\""
+    "watch": "echo 'See http://127.0.0.1:5000' && npx nodemon --exec \"heroku local web\"",
+    "test": "npx mocha"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
