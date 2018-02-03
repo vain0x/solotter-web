@@ -1,6 +1,7 @@
 {
   "plugins": [
-    "node"
+    "node",
+    "mocha"
   ],
   "extends": [
     "eslint:recommended",
@@ -8,13 +9,20 @@
   ],
   "env": {
     "es6": true,
+    "mocha": true,
     "browser": true,
     "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2017
   },
   "rules": {
     "no-unused-vars": [
       "warn",
-      { "argsIgnorePattern": "^_" }
-    ]
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "no-constant-condition": "off"
   }
 }

@@ -4,7 +4,7 @@ block content
   h1= title
   form(
     class="tweet-form"
-    action="/tweet/post-tweet"
+    action="/tweet/post-tweet/"
     method="POST"
   )
     p #{twitterUser.screenName}
@@ -23,7 +23,7 @@ block content
 
   h2 Logout
   form(
-    action="/auth/logout"
+    action="/auth/logout/"
     method="POST"
   )
     input(type="hidden" name="_csrf" value=csrfToken)

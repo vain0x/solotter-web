@@ -1,28 +1,16 @@
 const express = require("express");
+const auth = require("./auth");
 const { TwitterAppService } = require("../models/twitter-service");
 
 const router = express.Router();
 const twitterAppService = new TwitterAppService();
 
-const isLoggedIn = req => {
-  const t = req.session.twitter;
-  if (t === undefined) return false;
-  return t.accessToken !== undefined;
-};
-
 const createTwitterUserService = req => {
-  return twitterAppService.userService(req.session.twitter.accessToken);
+  const t = req.session.twitter;
+  return twitterAppService.userService(t.accessToken, t.user);
 };
 
-// Require authentication with Twitter for end-points below.
-router.all("*", (req, res, next) => {
-  if (!isLoggedIn(req)) {
-    res.redirect("/auth/login");
-    return;
-  }
-
-  next();
-});
+router.all("*", auth.requireAuthMiddleware);
 
 router.get("/", (req, res, _next) => {
   const screenName = req.session.twitter.user.screenName;
@@ -45,12 +33,15 @@ router.post("/post-tweet", (req, res, _next) => {
 
   twitterUserService.postTweet(content).then(
     _ => {
-      res.redirect("/tweet?status=success");
+      res.redirect("/tweet/?status=success");
     },
     error => {
       console.error(error);
-      res.redirect("/tweet?status=error");
+      res.redirect("/tweet/?status=error");
     });
 });
 
-module.exports = router;
+module.exports = {
+  createTwitterUserService,
+  tweetRouter: router,
+};

@@ -1,0 +1,8 @@
+extends layout
+
+block main
+  h1= title
+  ul
+    each userGroup in userGroups
+      li
+        a(href=`./edit/?slug=${userGroup.path}`)= userGroup.slug
