@@ -1,0 +1,37 @@
+:root {
+    --primary-color-light: #6746c3;
+    --primary-color-dark: #000063;
+    --primary-color: #311b92;
+    --primary-color-text: #fafafa;
+    --accent-color: #ffa000;
+    --accent-color-text: #212121;
+    --accent-color-light: #ffd149;
+    --accent-color-dark: #c67100;
+    --base-color: #fafafa;
+    --base-color-text: #212121;
+}
+
+html {
+    /* For rem. */
+    font-size: 62.5%;
+}
+
+body {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-feature-settings: 'palt' on;
+}
+
+body,
+button,
+input,
+optgroup,
+select,
+textarea {
+    line-height: 1.5;
+}
+
+html,
+body,
+#app {
+    height: 100%;
+}

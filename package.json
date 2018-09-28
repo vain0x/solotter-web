@@ -7,6 +7,18 @@
   "author": "vain0x <vainzerox@gmail.com>",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "start": "npm run prod",
+    "test": "jest",
+    "dev": "run-p dev:*",
+    "dev:client-build": "cross-env NODE_ENV=development webpack --mode development --watch --progres",
+    "dev:server-build": "tsc --watch",
+    "dev:server-serve": "cross-env NODE_ENV=development nodemon ./index.js",
+    "prod": "run-s prod:*",
+    "prod:client-build": "cross-env NODE_ENV=production webpack --mode production",
+    "prod:server-build": "tsc",
+    "prod:server-serve": "cross-env NODE_ENV=production node ./index.js"
+  },
   "devDependencies": {
     "@types/jest": "^23.3.2",
     "@types/node": "^10.11.2",
@@ -19,7 +31,8 @@
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "typescript": "^3.1.1",
-    "webpack": "^4.20.2"
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.1"
   },
   "dependencies": {
     "@types/body-parser": "^1.17.0",
