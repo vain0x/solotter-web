@@ -7,3 +7,7 @@
 ## Features
 - Login.
 - Tweet.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development environment.
