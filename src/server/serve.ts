@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as serveStatic from 'serve-static';
 import * as path from 'path';
+import * as assert from 'assert';
 
 export const serve = () => {
   const hostname = 'localhost';
@@ -15,5 +16,11 @@ export const serve = () => {
   app.listen(port, hostname, () => {
     console.log(`Serves ${publicDir}`);
     console.log(`Start listening http://${hostname}:${port}/`);
+  });
+};
+
+export const serveTests = () => {
+  test('hello', () => {
+    assert.strictEqual(2 * 3, 6);
   });
 };

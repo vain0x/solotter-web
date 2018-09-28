@@ -3,6 +3,6 @@ import * as ReactDOM from 'react-dom';
 import { Hello } from './HelloComponent';
 
 ReactDOM.render(
-  <Hello compiler='JavaScript' framework='React' />,
+  <Hello compiler='TypeScript' framework='React' />,
   document.getElementById('app')
 );
