@@ -1,3 +1,9 @@
+# Ignore temporary files for HMR.
+*.hot-update.js
+*.hot-update.json
+
+
+
 # Created by expression-generator 4.15.5
 
 # Logs
