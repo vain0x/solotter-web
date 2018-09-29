@@ -10,6 +10,13 @@
             true,
             "single"
         ],
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "always",
+                "singleline": "never"
+            }
+        ],
         "max-classes-per-file": false,
         "indent": true,
         "space-before-function-paren": false,

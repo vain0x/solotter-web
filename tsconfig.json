@@ -17,5 +17,10 @@
   },
   "include": [
     "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "v1",
+    "v2"
   ]
 }
