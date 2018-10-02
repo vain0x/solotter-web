@@ -2,7 +2,7 @@ import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import serveStatic from 'serve-static';
 import * as path from 'path';
-import * as assert from 'assert';
+import { TestSuite } from './testing';
 import { serverRouter } from './routing';
 
 const parseAuthHeader = (a: string | undefined): string | undefined => {
@@ -46,14 +46,14 @@ export const serve = () => {
   });
 };
 
-export const serveTests = () => {
+export const serveTests: TestSuite = ({ test, is }) => {
   test('hello', () => {
-    assert.strictEqual(2 * 3, 6);
+    is(2 * 3, 6);
   });
 
   test('parseAuthHeader', () => {
-    assert.strictEqual(parseAuthHeader('Bearer deadbeef'), 'deadbeef');
-    assert.strictEqual(parseAuthHeader(undefined), undefined);
-    assert.strictEqual(parseAuthHeader('Basic hoge'), undefined);
+    is(parseAuthHeader('Bearer deadbeef'), 'deadbeef');
+    is(parseAuthHeader(undefined), undefined);
+    is(parseAuthHeader('Basic hoge'), undefined);
   });
 };

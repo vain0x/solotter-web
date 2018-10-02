@@ -1,13 +1,19 @@
 import * as assert from 'assert';
 import { serveTests } from './server/serve';
-import { helloTests } from './client/HelloComponent';
+import { test, describe } from 'mocha';
+import UniversalRouter from 'universal-router';
+
+const toolkit = {
+  describe,
+  test,
+  is: assert.deepStrictEqual,
+};
 
 test('hello', () => {
   assert.strictEqual(1 + 2 * 3, 7);
 });
 
-describe('helloTests', helloTests);
-describe('serveTests', serveTests);
+describe('serveTests', () => serveTests(toolkit));
 
 describe('JavaScript', () => {
   describe('String', () => {
@@ -21,5 +27,36 @@ describe('JavaScript', () => {
       const second = 'Basic YWxhZGRpbjpvcGVuc2VzYW1l'.match(r);
       assert.strictEqual(second && second[1], null);
     });
+  });
+});
+
+describe('universal-router', () => {
+  const { is } = toolkit;
+
+  test('next', async () => {
+    const router = new UniversalRouter<{ auth: boolean }, {}>([
+      {
+        path: '/',
+        action: () => '/',
+      },
+      {
+        path: '(.*)',
+        action({ auth, next }) {
+          if (auth) {
+            return next();
+          } else {
+            return '/forbidden';
+          }
+        },
+      },
+      {
+        path: '/secret',
+        action: () => '/secret',
+      },
+    ]);
+
+    is(await router.resolve({ pathname: '/', auth: false }), '/');
+    is(await router.resolve({ pathname: '/secret', auth: false }), '/forbidden');
+    is(await router.resolve({ pathname: '/secret', auth: true }), '/secret');
   });
 });
