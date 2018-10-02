@@ -4,5 +4,5 @@ import { Hello } from './HelloComponent';
 
 ReactDOM.render(
   <Hello compiler='TypeScript' framework='React' />,
-  document.getElementById('app')
+  document.getElementById('app'),
 );
