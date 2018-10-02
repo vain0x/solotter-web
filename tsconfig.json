@@ -13,6 +13,7 @@
     "allowJs": true,
     "jsx": "react",
     "moduleResolution": "node",
+    "esModuleInterop": true,
     "strict": true
   },
   "include": [

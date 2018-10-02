@@ -8,3 +8,18 @@ test('hello', () => {
 
 describe('helloTests', helloTests);
 describe('serveTests', serveTests);
+
+describe('JavaScript', () => {
+  describe('String', () => {
+    const r = new RegExp('^Bearer ([a-fA-F0-9]+)$');
+    test('it should match', () => {
+      const match = 'Bearer deadbeaf'.match(r);
+      assert.strictEqual(match && match[1], 'deadbeaf');
+    });
+
+    test('it should not match', () => {
+      const second = 'Basic YWxhZGRpbjpvcGVuc2VzYW1l'.match(r);
+      assert.strictEqual(second && second[1], null);
+    });
+  });
+});
