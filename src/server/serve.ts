@@ -1,9 +1,9 @@
 import express from 'express';
-import { Request, Response, NextFunction } from 'express';
-import serveStatic from 'serve-static';
+import { NextFunction, Request, Response } from 'express';
 import * as path from 'path';
-import { TestSuite } from './testing';
+import serveStatic from 'serve-static';
 import { serverRouter } from './routing';
+import { TestSuite } from './testing';
 
 const parseAuthHeader = (a: string | undefined): string | undefined => {
   const s = a && a.split(' ') || [];
