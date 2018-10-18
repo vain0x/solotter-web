@@ -1,7 +1,7 @@
 {
   "name": "solotter-web",
   "version": "2.0.0",
-  "description": "Twitter client webapp for those who wants to stay on work",
+  "description": "Twitter client webapp for those who wants to stay focused on work",
   "main": "index.js",
   "repository": "https://github.com/vain0x/solotter-web",
   "author": "vain0x <vainzerox@gmail.com>",

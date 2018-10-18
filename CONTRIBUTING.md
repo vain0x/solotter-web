@@ -1,13 +1,13 @@
 # CONTRIBUTING
 
-Pull Request is welcome.
+Pull requests are welcome.
 
 ## Development
 
 ### Dev: Prerequisites
 
-- NodeJS (>= 8.3)
-- Yarn
+- NodeJS (>= 8.9)
+- Yarn (>= 1.9)
 
 ```sh
 # Once at first.
@@ -16,7 +16,7 @@ yarn
 
 ### Dev: Build Commands
 
-```
+```sh
 # Keep build process running.
 yarn run dev
 
@@ -37,7 +37,7 @@ yarn run prod
 - `dist/`
     Contains build results and static files to be served.
 - `dist/public/`
-    Static files to be served. html, style, scripts, and images.
+    Static files to be served. html docs, stylesheets, scripts, images, etc.
 - `dist/server/`
     Server app.
 - *dist/client/*
@@ -46,11 +46,8 @@ yarn run prod
 ### Dev: Notes on TypeScript and Build Process
 
 We use **TypeScript** for both server/client apps.
-
 Config files for server/client apps are *same*.
-
-Sharing config files (tsconfig and tslint) for them
-seems to simplify build process.
+Sharing config files (tsconfig and tslint) for them seems to simplify build process.
 
 Build tools for server/client apps are *different*.
 
