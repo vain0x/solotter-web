@@ -1,5 +1,3 @@
-package.json
-package-lock.json
-client/
-core/
-server/
+*.js
+*.js.map
+.env

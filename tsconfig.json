@@ -1,6 +1,28 @@
 {
-  "extends": "./src/tsconfig-client.json",
   "compilerOptions": {
-    "baseUrl": "./src"
-  }
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "target": "es2016",
+    "module": "commonjs",
+    "lib": [
+      "es2016",
+      "dom"
+    ],
+    "sourceMap": true,
+    "allowJs": true,
+    "jsx": "react",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "preserveWatchOutput": true
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "v1",
+    "v2"
+  ]
 }
