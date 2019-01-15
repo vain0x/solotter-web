@@ -14,6 +14,8 @@ Pull requests are welcome.
 yarn
 ```
 
+- Create `.env` file for your environment and twitter account settings. See `.env-sample` as example.
+
 ### Dev: Build Commands
 
 ```sh
