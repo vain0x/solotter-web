@@ -1,0 +1,141 @@
+:root {
+    --primary-color-light: #6746c3;
+    --primary-color-dark: #000063;
+    --primary-color: #311b92;
+    --primary-color-text: #fafafa;
+    --accent-color: #ffa000;
+    --accent-color-text: #212121;
+    --accent-color-light: #ffd149;
+    --accent-color-dark: #c67100;
+    --base-color: #fafafa;
+    --base-color-text: #212121;
+    --divider-color: #bdbdbd;
+    --blue: #2563EB;
+}
+
+/** Override defaults. See CSS remedy for details. */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+h1 {
+    margin: 0;
+}
+
+body {
+    padding: 0;
+}
+
+button {
+    font-size: inherit;
+}
+
+body,
+button,
+input,
+textarea {
+    line-height: 1.8;
+}
+
+button:disabled,
+input:read-only {
+    opacity: 0.4;
+}
+
+
+
+html,
+body,
+#app-root {
+    height: 100%;
+}
+
+body {
+    padding: 1rem;
+
+    font-size: 1.6rem;
+    font-family: 'Yu Gothic Medium', sans-serif;
+    color: #333;
+}
+
+@media screen and (min-width: 600px) {
+    body {
+        padding: 2rem 8rem;
+    }
+}
+
+#app-root {
+    display: grid;
+}
+
+
+
+#welcome-component .login-button {
+    padding: 1rem 2rem;
+    border: 2px solid var(--blue);
+    background: white;
+    border-radius: 3rem;
+    color: var(--blue);
+}
+
+#welcome-component .login-button:hover {
+    background-color: #f0f6ff;
+}
+
+
+
+#tweet-component .tweet-textarea {
+    padding: 0.5rem 1rem;
+    border: 2px solid #bdbdbd;
+}
+
+#tweet-component .tweet-textarea:active,
+#tweet-component .tweet-textarea:focus {
+    border-color: transparent;
+}
+
+#tweet-component .tweet-textarea:read-only {
+    border-color: #333;
+    background-color: #f3f3f3;
+    cursor: default;
+}
+
+#tweet-component .tweet-button {
+    align-self: flex-end;
+
+    padding: 1rem 4rem;
+    border: 2px solid var(--primary-color-light);
+    background: var(--primary-color-light);
+    border-radius: 4rem;
+    color: white;
+}
+
+#tweet-component .tweet-button:not([disabled]):hover {
+    filter: brightness(1.2);
+}
+
+#tweet-component .tweet-message {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+
+    background: var(--accent-color);
+    color: white;
+}
+
+#tweet-component .tweet-message[data-bad] {
+    background-color: #dc2626;
+}
+
+
+
+/* Utilities */
+
+.flex {
+    display: flex
+}
+
+.flex-col {
+    flex-direction: column
+}

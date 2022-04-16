@@ -1,50 +1,34 @@
 import { AccessUser, TwitterUserAuth } from "./types"
 
-export interface APISchema {
+export interface ApiSchema {
   "/api/twitter-auth-request": {
-    request: { authId: string }
-    response: { oauth_token: string },
+    req: { authId: string }
+    res: { oauth_token: string }
   }
   "/api/twitter-auth-callback": {
-    request: {
+    req: {
       oauth_token: string
-      oauth_verifier: string,
+      oauth_verifier: string
     }
-    response: {},
+    res: {}
   }
   "/api/twitter-auth-end": {
-    request: { authId: string }
-    response: { userAuth: TwitterUserAuth } | undefined,
+    req: { authId: string }
+    res: { user: TwitterUserAuth | null }
   }
   "/api/users/name": {
-    request: { userAuth: TwitterUserAuth },
-    response: AccessUser | undefined,
+    req: { userAuth: TwitterUserAuth }
+    res: { user: AccessUser | null }
   }
   "/api/statuses/update": {
-    request: {
+    req: {
       userAuth: TwitterUserAuth
-      status: string,
-    },
-    response: { err: any },
+      status: string
+    }
+    res: {}
   }
 }
 
-type APIPath = keyof APISchema
-
-export type APIReq<P extends APIPath> =
-  APISchema[P] extends { request: infer Q } ? Q : never
-
-export type APIRes<P extends APIPath> =
-  APISchema[P] extends { response: infer R } ? R : never
-
-export interface APIClient {
-  post<P extends APIPath>(path: P, req: APIReq<P>): Promise<APIRes<P>>
-}
-
-export type APIServer = {
-  [P in APIPath]: (req: APIReq<P>) => Promise<
-    | { json: APIRes<P> }
-    | { redirect: string }
-    | { json: APIRes<P>, redirect: string }
-    >
+export type SolotterApiServer = {
+  [P in keyof ApiSchema]: (req: ApiSchema[P]["req"]) => Promise<ApiSchema[P]["res"]>
 }
