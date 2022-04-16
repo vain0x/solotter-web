@@ -1,7 +1,4 @@
-import { config as dotEnvConfig } from "dotenv"
-import express, { Request, Response } from "express"
-import { OAuth } from "oauth"
-import { apiGET } from "./server/infra-twitter"
+import express from "express"
 
 export const play = async () => {
   const host = process.env.HOST || "localhost"

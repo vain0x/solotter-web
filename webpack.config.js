@@ -1,18 +1,18 @@
 const path = require("path")
 
-const SCRIPTS_DIR = path.join(__dirname, "dist/public/scripts")
+const SCRIPTS_DIR = path.join(__dirname, "static/scripts")
 
 module.exports = {
   context: __dirname,
   entry: [
-    "./src/client/app.tsx",
+    "./src/client/client_main.ts",
   ],
   output: {
-    filename: "bundle.js",
+    filename: "main.js",
     path: SCRIPTS_DIR,
   },
   resolve: {
-    extensions: [".ts", ".js"],
+    extensions: [".ts", ".tsx", ".js"],
   },
   module: {
     rules: [

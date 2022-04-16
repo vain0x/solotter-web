@@ -10,143 +10,132 @@
     --base-color: #fafafa;
     --base-color-text: #212121;
     --divider-color: #bdbdbd;
+    --blue: #2563EB;
 }
 
-html {
-    /* 1rem = 10px. */
-    font-size: 62.5%;
+/** Override defaults. See CSS remedy for details. */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+h1 {
+    margin: 0;
+}
+
+body {
+    padding: 0;
+}
+
+button {
+    font-size: inherit;
 }
 
 body,
 button,
 input,
-optgroup,
-select,
 textarea {
-    line-height: 1.5;
+    line-height: 1.8;
 }
 
 button:disabled,
 input:read-only {
-    opacity: 0.75;
+    opacity: 0.4;
 }
 
 
 
 html,
 body,
-#app,
-#app > * {
+#app-root {
     height: 100%;
 }
 
 body {
+    padding: 1rem;
+
     font-size: 1.6rem;
-    font-family: 'Noto Sans JP', sans-serif;
-    font-feature-settings: 'palt' on;
-
-    color: var(--base-color-text);
+    font-family: 'Yu Gothic Medium', sans-serif;
+    color: #333;
 }
 
-#app {
-    background-color: var(--base-color);
-}
-
-#app > article {
-    display: flex;
-    flex-flow: column nowrap;
-}
-
-#app header {
-    background-color: var(--primary-color-dark);
-}
-
-#app header > h1 {
-    margin: 0;
-    padding: 16px 16px;
-
-    font-size: 2.5rem;
-    color: var(--primary-color-text);
-}
-
-#app main {
-    flex: 1 1 auto;
-    margin: 16px;
-
-    display: flex;
-    flex-flow: column nowrap;
-}
-
-@media (min-width: 649px) {
-    #app header > h1 {
-        max-width: 600px;
-    }
-
-    #app main {
-        max-width: 600px;
-        align-self: center;
+@media screen and (min-width: 600px) {
+    body {
+        padding: 2rem 8rem;
     }
 }
 
-#app h2,
-#app h3 {
-    margin: 0;
-    padding: 8px 16px;
-}
-
-#app h2 {
-    font-size: 2.3rem;
-    color: var(--primary-color-dark);
-}
-
-#app h3 {
-    font-size: 2.1rem;
-    color: var(--primary-color-dark);
+#app-root {
+    display: grid;
 }
 
 
 
-#loading-component {
-    background: var(--primary-color);
-    color: var(--primary-color-text);
+#welcome-component .login-button {
+    padding: 1rem 2rem;
+    border: 2px solid var(--blue);
+    background: white;
+    border-radius: 3rem;
+    color: var(--blue);
 }
 
-#loading-component main {
-    align-items: center;
-    justify-content: center;
-
-    font-size: 3.0rem;
-    font-weight: 900;
+#welcome-component .login-button:hover {
+    background-color: #f0f6ff;
 }
 
 
-
-#tweet-component .user-name {
-    margin: 8px 0;
-}
-
-#tweet-component .tweet-form {
-    display: flex;
-    flex-flow: column nowrap;
-}
 
 #tweet-component .tweet-textarea {
-    border: none;
-    background-color: var(--base-color);
+    padding: 0.5rem 1rem;
+    border: 2px solid #bdbdbd;
+}
+
+#tweet-component .tweet-textarea:active,
+#tweet-component .tweet-textarea:focus {
+    border-color: transparent;
+}
+
+#tweet-component .tweet-textarea:read-only {
+    border-color: #333;
+    background-color: #f3f3f3;
+    cursor: default;
 }
 
 #tweet-component .tweet-button {
     align-self: flex-end;
 
-    margin: 16px 0;
-    padding: 4px 8px;
+    padding: 1rem 4rem;
+    border: 2px solid var(--primary-color-light);
+    background: var(--primary-color-light);
+    border-radius: 4rem;
+    color: white;
+}
+
+#tweet-component .tweet-button:not([disabled]):hover {
+    filter: brightness(1.2);
 }
 
 #tweet-component .tweet-message {
-    margin: 16px 4px;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
 
-    background: var(--accent-color-light);
-    color: var(--accent-color-text);
+    background: var(--accent-color);
+    color: white;
+}
+
+#tweet-component .tweet-message[data-bad] {
+    background-color: #dc2626;
+}
+
+
+
+/* Utilities */
+
+.flex {
+    display: flex
+}
+
+.flex-col {
+    flex-direction: column
 }

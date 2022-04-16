@@ -4,6 +4,7 @@
     "outDir": "./target",
     "rootDir": "./src",
     "esModuleInterop": true,
+    "jsx": "react",
     "lib": [
       "ES2020",
       "DOM"
