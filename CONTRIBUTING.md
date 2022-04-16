@@ -13,16 +13,16 @@ Pull requests are welcome.
 npm ci --ignore-scripts
 ```
 
-- Create `.env` file for your environment and twitter account settings. See `.env-sample` as example.
+- Copy `.env_example` to `.env` and edit it for your environment.
 
 ### Dev: Build Commands
 
 ```sh
 # Keep build process running.
-yarn run dev
+npm run dev
 
 # Build for production use.
-yarn run prod
+npm run build
 ```
 
 ### Dev: Directory Structure
