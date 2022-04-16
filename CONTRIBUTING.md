@@ -6,12 +6,11 @@ Pull requests are welcome.
 
 ### Dev: Prerequisites
 
-- NodeJS (>= 8.9)
-- Yarn (>= 1.9)
+- NodeJS (>= 16.13.1)
 
 ```sh
-# Once at first.
-yarn
+# Do this at first and whenever package-lock.json is changed.
+npm ci --ignore-scripts
 ```
 
 - Create `.env` file for your environment and twitter account settings. See `.env-sample` as example.
