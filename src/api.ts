@@ -1,4 +1,4 @@
-import { AccessUser, TwitterUserAuth } from "./types"
+import { TwitterUserAuth } from "./types"
 
 export interface ApiSchema {
   "/api/twitter-auth-request": {
@@ -15,10 +15,6 @@ export interface ApiSchema {
   "/api/twitter-auth-end": {
     req: { authId: string }
     res: { user: TwitterUserAuth | null }
-  }
-  "/api/users/name": {
-    req: { userAuth: TwitterUserAuth }
-    res: { user: AccessUser | null }
   }
   "/api/statuses/update": {
     req: {

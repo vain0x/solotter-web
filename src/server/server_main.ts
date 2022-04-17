@@ -9,12 +9,6 @@ const ROOT = process.cwd()
 const ENV_FILE = path.join(ROOT, ".env")
 const STATIC_DIR = path.join(ROOT, "static")
 
-// const parseAuthHeader = (a: string | undefined): string | undefined => {
-//   const s = a && a.split(" ") || []
-//   return s[0] === "Bearer" && s[1] || undefined
-// }
-// parseAuthHeader(req.headers.authorization)
-
 export const startServer = async () => {
   const env = envOrConfig(await readConfigFile(ENV_FILE))
   const host = env.getOr("HOST", "localhost")

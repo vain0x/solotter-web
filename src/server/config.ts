@@ -1,5 +1,6 @@
 import fs from "node:fs/promises"
 
+/** Reads a file to parse a configuration. (`KEY=VALUE` syntax.) */
 export const readConfigFile = async (pathname: string): Promise<Record<string, string | undefined>> => {
   const text = await fs.readFile(pathname, { encoding: "utf-8" })
   const entries: [string, string][] = []
@@ -14,8 +15,15 @@ export const readConfigFile = async (pathname: string): Promise<Record<string, s
   return Object.fromEntries(entries)
 }
 
+/**
+ * Wraps a configuration object for shorter code.
+ *
+ * - Values are overridden by `process.env`.
+ */
 export const envOrConfig = (config: Record<string, string | undefined>): {
+  /** Gets a value. Error if unspecified or empty. */
   get: (key: string) => string
+  /** Gets a value or alternative value if unspecified or empty. */
   getOr: (key: string, alt: string) => string
 } => ({
   get: (key: string) => {

@@ -1,19 +1,10 @@
 :root {
     --primary-color-light: #6746c3;
-    --primary-color-dark: #000063;
-    --primary-color: #311b92;
-    --primary-color-text: #fafafa;
     --accent-color: #ffa000;
-    --accent-color-text: #212121;
-    --accent-color-light: #ffd149;
-    --accent-color-dark: #c67100;
-    --base-color: #fafafa;
-    --base-color-text: #212121;
-    --divider-color: #bdbdbd;
     --blue: #2563EB;
 }
 
-/** Override defaults. See CSS remedy for details. */
+/* Override defaults. See CSS remedy for details. */
 * {
     box-sizing: border-box;
 }
@@ -46,6 +37,8 @@ input:read-only {
 
 
 
+/* Global layout. */
+
 html,
 body,
 #app-root {
@@ -71,6 +64,8 @@ body {
 }
 
 
+
+/* Styles for individual components. */
 
 #welcome-component .login-button {
     padding: 1rem 2rem;

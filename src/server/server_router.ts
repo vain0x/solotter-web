@@ -73,17 +73,6 @@ export const serverRouter = (props: {
     })().catch(next)
   })
 
-  // router.get("/api/users/name", requireAuth, (req, res, next) => {
-  //   (async () => {
-  //     const { userAuth } = req.body
-  //     res.json({
-  //       userAuth,
-  //       displayName: "John Doe",
-  //       screenName: "tap",
-  //     })
-  //   })().catch(next)
-  // })
-
   router.post("/api/statuses/update", requireAuth, (req, res, next) => {
     (async () => {
       const { token, token_secret, screen_name } = req.session?.auth ?? {}
