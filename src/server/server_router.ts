@@ -33,10 +33,12 @@ export const serverRouter = (props: {
   const router = express.Router()
   const staticFileHandler = express.static(staticDir)
 
-  router.use((req, _res, next) => {
-    console.log(`access ${req.method} ${req.url}`)
-    next()
-  })
+  if (process.env.NODE_ENV === "development") {
+    router.use((req, _res, next) => {
+      console.log(`access ${req.method} ${req.url}`)
+      next()
+    })
+  }
 
   router.get([
     "/favicon.ico",
