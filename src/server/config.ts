@@ -2,7 +2,13 @@ import fs from "node:fs/promises"
 
 /** Reads a file to parse a configuration. (`KEY=VALUE` syntax.) */
 export const readConfigFile = async (pathname: string): Promise<Record<string, string | undefined>> => {
-  const text = await fs.readFile(pathname, { encoding: "utf-8" })
+  let text: string
+  try {
+    text = await fs.readFile(pathname, { encoding: "utf-8" })
+  } catch (err: any) {
+    if (err.code === "ENOENT") return {}
+    throw err
+  }
   const entries: [string, string][] = []
   for (const line of text.split(/\r?\n/)) {
     if (line.startsWith("#")) continue
