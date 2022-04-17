@@ -12,9 +12,3 @@
 ## Contribution
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development environment.
-
-## Known Issues
-
-- Remove deprecated library: `request` (Basically node-fetch is predecessor. Re-implementing `oauth` parameter needs some work.)
-- Count text length. (Use `twitter-text` package.)
-- Write tests

@@ -49,3 +49,9 @@ Build tools for server/client apps are *different*.
 
 - To build the client app, **Webpack** bundles scripts into single file `/static/scripts/main.js`.
 - To build the server app, **tsc** (TypeScript Compiler) converts multiple typescript files to multiple javascript files.
+
+## TODOs
+
+- Remove deprecated library: `request` (Basically node-fetch is predecessor. Re-implementing `oauth` parameter needs some work.)
+- Count text length. (Use `twitter-text` package.)
+- Write tests
