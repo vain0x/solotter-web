@@ -168,7 +168,6 @@ export const startClient = () => {
   let screenName = ""
   try {
     const json = document.getElementById("data-script")?.getAttribute("data-json")!
-    console.log("data-json", json)
     const data = JSON.parse(json)
     if (data?.auth != null) {
       loggedIn = true
@@ -177,8 +176,6 @@ export const startClient = () => {
   } catch (err) {
     console.error(err)
   }
-
-  console.log(loggedIn, screenName)
 
   const appRoot = createRoot(document.getElementById("app-root")!)
   appRoot.render((

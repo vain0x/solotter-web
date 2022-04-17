@@ -35,7 +35,7 @@ export const serverRouter = (props: {
 
   if (process.env.NODE_ENV === "development") {
     router.use((req, _res, next) => {
-      console.log(`access ${req.method} ${req.url}`)
+      process.stderr.write(`${req.method} ${req.url}\n`)
       next()
     })
   }
