@@ -39,8 +39,7 @@ const WelcomeComponent = () => {
 const TweetComponent = (props: { screenName: string }) => {
   const { screenName } = props
   const [status, setStatus] = useState("")
-  const [message, setMessage] = useState("")
-  const [bad, setBad] = useState(false)
+  const [state, setState] = useState<"success" | "fail" | "busy" | null>(null)
 
   const [statusToSubmit, setStatusToSubmit] = useState<string>()
   useEffect(() => {
@@ -50,8 +49,7 @@ const TweetComponent = (props: { screenName: string }) => {
       return
     }
 
-    setMessage("...")
-    setBad(false)
+    setState("busy")
 
     const abortController = new AbortController()
     const signal = abortController.signal
@@ -66,12 +64,11 @@ const TweetComponent = (props: { screenName: string }) => {
         if (!res.ok) throw new Error(`Failed. (Status ${res.status})`)
 
         setStatus("")
-        setMessage("Success!")
+        setState("success")
       } catch (err) {
         console.error(err)
         if (!signal.aborted) {
-          setMessage("Sorry, submission didn't succeed.")
-          setBad(true)
+          setState("fail")
         }
       } finally {
         if (!signal.aborted) {
@@ -81,6 +78,22 @@ const TweetComponent = (props: { screenName: string }) => {
     })()
     return () => { abortController.abort() }
   })
+
+  useEffect(() => {
+    if (state === "success") {
+      const h = setTimeout(() => { setState(null) }, 5000)
+      return () => { clearTimeout(h) }
+    }
+  }, [state])
+
+  const message = (() => {
+    switch (state) {
+      case "success": return "Success!"
+      case "fail": return "Sorry, submission didn't succeed."
+      case "busy": return "..."
+      default: return ""
+    }
+  })()
 
   const ready = screenName != null && statusToSubmit == null
   const formRef = useRef<HTMLFormElement>(null)
@@ -123,7 +136,7 @@ const TweetComponent = (props: { screenName: string }) => {
           </button>
 
           <div className="tweet-message" hidden={!message}
-            data-bad={bad ? true : undefined}
+            data-bad={state === "fail" ? true : undefined}
             style={{ alignSelf: "start", minWidth: "20rem" }}>
             {message}
           </div>
@@ -142,7 +155,8 @@ const TweetComponent = (props: { screenName: string }) => {
 const LogoutButton = () => {
   return (
     <button type="button"
-      style={{ padding: "0.5rem 1rem", border: "1px solid #bdbdbd", background: "white", fontSize: "1rem" }}
+      className="logout-button"
+      style={{ padding: "0.5rem 1rem", border: "1px solid #bdbdbd", fontSize: "1rem" }}
       onClick={() => {
         (async () => {
           const res = await fetch("/api/logout", { method: "POST" })

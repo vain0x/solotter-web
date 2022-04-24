@@ -125,6 +125,16 @@ body {
 
 
 
+.logout-button {
+    background: white;
+}
+
+.logout-button:hover {
+    background-color: #f3f3f3;
+}
+
+
+
 /* Utilities */
 
 .flex {

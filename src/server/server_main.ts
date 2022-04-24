@@ -8,6 +8,7 @@ import { oauthClientWith, oauthServiceWith, TwitterApiClient } from "./twitter_a
 const ROOT = process.cwd()
 const ENV_FILE = path.join(ROOT, ".env")
 const STATIC_DIR = path.join(ROOT, "static")
+const WEEK = 7 * 24 * 60 * 60 * 1000
 
 export const startServer = async () => {
   const env = envOrConfig(await readConfigFile(ENV_FILE))
@@ -32,7 +33,7 @@ export const startServer = async () => {
     new TwitterApiClient({ ...twitterConfig, userAuth })
 
   const app = express()
-  app.use(cookieSession({ secret: COOKIE_SECRET }))
+  app.use(cookieSession({ sameSite: "lax", maxAge: 12 * WEEK, secret: COOKIE_SECRET }))
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
   app.use(serverRouter({ staticDir: STATIC_DIR, oauthService, twitterServiceFn }))

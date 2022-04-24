@@ -1,6 +1,6 @@
 {
   "name": "solotter-web",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Twitter client webapp for those who wants to stay focused on work",
   "main": "index.js",
   "repository": "https://github.com/vain0x/solotter-web",
@@ -9,13 +9,13 @@
   "private": true,
   "scripts": {
     "start": "node --experimental-specifier-resolution=node target/server/server_main.js",
-    "dev": "node scripts/make_package_json.js && npm-run-concurrently tsc-watch webpack-watch mocha-watch",
+    "dev": "node scripts/make_package_json.js && npm-run-concurrently tsc-watch webpack-watch",
     "tsc-build": "tsc --build",
     "tsc-watch": "tsc --watch --preserveWatchOutput",
     "webpack-build": "webpack --mode production",
     "webpack-watch": "webpack --mode development --watch",
     "build": "node scripts/make_package_json.js && npm run tsc-build && npm run webpack-build",
-    "test": "npm run build && npm run mocha-run"
+    "test": "echo \"Sorry no tests\""
   },
   "dependencies": {
     "@types/cookie-session": "^2.0.44",
