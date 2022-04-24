@@ -21,7 +21,7 @@
 
 ## v2.0.0 - 2019-06-06
 
-- Rewrite UI with React (from Vue)
+- Rewrite UI with React (from express + template engine)
 - Update dependencies
 
 ## v1.0.0 - 2018-02-03
