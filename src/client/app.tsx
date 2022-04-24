@@ -155,7 +155,8 @@ const TweetComponent = (props: { screenName: string }) => {
 const LogoutButton = () => {
   return (
     <button type="button"
-      style={{ padding: "0.5rem 1rem", border: "1px solid #bdbdbd", background: "white", fontSize: "1rem" }}
+      className="logout-button"
+      style={{ padding: "0.5rem 1rem", border: "1px solid #bdbdbd", fontSize: "1rem" }}
       onClick={() => {
         (async () => {
           const res = await fetch("/api/logout", { method: "POST" })
